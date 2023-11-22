@@ -5,8 +5,8 @@
 #define NUM_LEDS 60
 
 CRGB leds[NUM_LEDS];
-void sendToLeds(const CRGB (&inArray)[10][6], CRGB (&outArray)[60]);
-void debugShow(const CRGB* array);
+void sendToLeds(const CRGB (&source)[10][6], CRGB (&leds)[60]);
+void debugShow(const CRGB (&leds)[60]);
 
 void setup() {
   //FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
@@ -37,34 +37,34 @@ void loop() {
 
 // -------- < Additional Functions > --------
 
-// fills outArray with the contents of inArray, reordered for zigzag output
-void sendToLeds(const CRGB (&inArray)[10][6], CRGB (&outArray)[60]){
+// updates the LED array with the content of the source array, rearranged into the proper order
+void sendToLeds(const CRGB (&source)[10][6], CRGB (&leds)[60]){
   for (int i = 0; i<10; i++){
-    outArray[i] = inArray[i][0];
-    outArray[19-i] = inArray[i][1];
-    outArray[20+i] = inArray[i][2];
-    outArray[39-i] = inArray[i][3];
-    outArray[40+i] = inArray[i][4];
-    outArray[59-i] = inArray[i][5];
+    leds[i] = source[i][0];
+    leds[19-i] = source[i][1];
+    leds[20+i] = source[i][2];
+    leds[39-i] = source[i][3];
+    leds[40+i] = source[i][4];
+    leds[59-i] = source[i][5];
   }
 }
 
-// prints the output array into the serial monitor instead of displaying it on the LEDs
-void debugShow(const CRGB* array){
+// prints the LED array into the serial monitor instead of displaying it on the actual LEDs
+void debugShow(const CRGB (&leds)[60]){
   Serial.println("-----------");
   for (int i = 0; i<10; i++){
     char hexStr[9];
-    sprintf(hexStr,"0x%02X%02X%02X ",array[i].r,array[i].g,array[i].b);
+    sprintf(hexStr,"0x%02X%02X%02X ",leds[i].r,leds[i].g,leds[i].b);
     Serial.print(hexStr);
-    sprintf(hexStr,"0x%02X%02X%02X ",array[19-i].r,array[19-i].g,array[19-i].b);
+    sprintf(hexStr,"0x%02X%02X%02X ",leds[19-i].r,leds[19-i].g,leds[19-i].b);
     Serial.print(hexStr);
-    sprintf(hexStr,"0x%02X%02X%02X ",array[20+i].r,array[20+i].g,array[20+i].b);
+    sprintf(hexStr,"0x%02X%02X%02X ",leds[20+i].r,leds[20+i].g,leds[20+i].b);
     Serial.print(hexStr);
-    sprintf(hexStr,"0x%02X%02X%02X ",array[39-i].r,array[39-i].g,array[39-i].b);
+    sprintf(hexStr,"0x%02X%02X%02X ",leds[39-i].r,leds[39-i].g,leds[39-i].b);
     Serial.print(hexStr);
-    sprintf(hexStr,"0x%02X%02X%02X ",array[40+i].r,array[40+i].g,array[40+i].b);
+    sprintf(hexStr,"0x%02X%02X%02X ",leds[40+i].r,leds[40+i].g,leds[40+i].b);
     Serial.print(hexStr);
-    sprintf(hexStr,"0x%02X%02X%02X ",array[59-i].r,array[59-i].g,array[59-i].b);
+    sprintf(hexStr,"0x%02X%02X%02X ",leds[59-i].r,leds[59-i].g,leds[59-i].b);
     Serial.println(hexStr);
   }
   Serial.println("-----------");
