@@ -1,5 +1,5 @@
-#ifndef TEMPLATES_H
-#define TEMPLATES_H
+#ifndef PRESETS_H
+#define PRESETS_H
 
 const CRGB ALL_OFF[10][6]  = {
   {0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000},

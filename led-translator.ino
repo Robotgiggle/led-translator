@@ -1,10 +1,11 @@
 #include <FastLED.h>
-#include "templates.h"
+#include "presets.h"
 
 #define LED_PIN 2
 #define NUM_LEDS 60
 
 CRGB leds[NUM_LEDS];
+int scrambleCoordsToFloat(int x, int y);
 void sendToLeds(const CRGB (&source)[10][6], CRGB (&leds)[60]);
 void debugShow(const CRGB (&leds)[60]);
 
@@ -12,20 +13,19 @@ void setup() {
   //FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
   Serial.begin(9600);
 
-  CRGB drawArray[10][6] = {
-    {0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000},
-    {0x000000, 0x000000, 0x111111, 0x222222, 0x000000, 0x000000},
-    {0x000000, 0xEEEEEE, 0x000000, 0x000000, 0x333333, 0x000000},
-    {0xDDDDDD, 0x000000, 0x000000, 0x000000, 0x000000, 0x444444},
-    {0xCCCCCC, 0x000000, 0x000000, 0x000000, 0x000000, 0x555555},
-    {0x000000, 0xBBBBBB, 0x000000, 0x000000, 0x666666, 0x000000},
-    {0x000000, 0xAAAAAA, 0x000000, 0x000000, 0x777777, 0x000000},
-    {0x000000, 0x000000, 0x999999, 0x888888, 0x000000, 0x000000},
-    {0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000},
-    {0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000},
-  };
+  int micInput = 43; // once we get the microphone set up, this will be the loudness (or maybe pitch) from it
 
-  sendToLeds(drawArray,leds);
+  CRGB colorBlobs[10][6];
+  for (int i = 0; i<10; i++){
+    for (int j = 0; j<6; j++){
+      float baseHue = scrambleCoordsToFloat(j,i);
+      float multiplier = scrambleCoordsToFloat(i,j)/20;
+      int finalHue = baseHue+(multiplier*micInput);
+      colorBlobs[i][j] = CHSV(finalHue,255,200);
+    }
+  }
+
+  sendToLeds(colorBlobs,leds);
 
   debugShow(leds);
   //FastLED.show();
@@ -37,7 +37,16 @@ void loop() {
 
 // -------- < Additional Functions > --------
 
-// updates the LED array with the content of the source array, rearranged into the proper order
+// converts the X and Y coordinates of each LED into a float from 0 to 255, based on a relatively chaotic function
+int scrambleCoordsToFloat(int x, int y){
+  float a = sin(0.57*(x-1.5)) + cos(0.67*(y+1));
+  float b = sin(0.93*(x-0.7)) + cos(0.45*(y+1));
+  float c = sin(0.45*(x+1.3)) + cos(0.27*(y+3));
+  float d = sin(0.25*(x-0.3)) + cos(0.95*(y+2));
+  return 50*abs(a) + 60*abs(b) - 50*abs(c) + 40*abs(d) + 40;
+}
+
+// updates the LED array with the content of the provided source array, rearranged into the proper order
 void sendToLeds(const CRGB (&source)[10][6], CRGB (&leds)[60]){
   for (int i = 0; i<10; i++){
     leds[i] = source[i][0];
