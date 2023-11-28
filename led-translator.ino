@@ -10,7 +10,7 @@ void sendToLeds(const CRGB (&source)[10][6], CRGB (&leds)[60]);
 void debugShow(const CRGB (&leds)[60]);
 
 void setup() {
-  //FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
+  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
   Serial.begin(9600);
 
   int micInput = 43; // once we get the microphone set up, this will be the loudness (or maybe pitch) from it
@@ -25,14 +25,14 @@ void setup() {
     }
   }
 
-  sendToLeds(colorBlobs,leds);
+  sendToLeds(RAINBOW,leds);
 
   debugShow(leds);
-  //FastLED.show();
+  FastLED.show();
 }
 
 void loop() {
-  
+
 }
 
 // -------- < Additional Functions > --------
