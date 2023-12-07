@@ -1,10 +1,12 @@
 #include <FastLED.h>
 #include "presets.h"
 
-#define LED_PIN 2
+#define LED_PIN 7
 #define NUM_LEDS 60
 
 CRGB leds[NUM_LEDS];
+CRGB colorBlobs[10][6];
+int micInput = 43;
 int scrambleCoordsToFloat(int x, int y);
 void sendToLeds(const CRGB (&source)[10][6], CRGB (&leds)[60]);
 void debugShow(const CRGB (&leds)[60]);
@@ -13,9 +15,17 @@ void setup() {
   FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
   Serial.begin(9600);
 
-  int micInput = 43; // once we get the microphone set up, this will be the loudness (or maybe pitch) from it
+  sendToLeds(ALL_OFF,leds);
+  FastLED.show();
+  delay(300);
 
-  CRGB colorBlobs[10][6];
+  sendToLeds(LOGO,leds);
+  FastLED.show();
+  delay(1500);
+}
+
+void loop() {
+  // generate array of randomized color blobs
   for (int i = 0; i<10; i++){
     for (int j = 0; j<6; j++){
       float baseHue = scrambleCoordsToFloat(j,i);
@@ -25,14 +35,13 @@ void setup() {
     }
   }
 
-  sendToLeds(RAINBOW,leds);
-
-  debugShow(leds);
+  // display color blobs
+  sendToLeds(colorBlobs,leds);
   FastLED.show();
-}
-
-void loop() {
-
+  
+  // increment input for randomizer
+  micInput += 1;
+  delay(10);
 }
 
 // -------- < Additional Functions > --------
