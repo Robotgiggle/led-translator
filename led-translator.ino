@@ -3,6 +3,7 @@
 
 #define LED_PIN 7
 #define NUM_LEDS 60
+#define BRIGHTNESS 200
 
 CRGB leds[NUM_LEDS];
 CRGB colorBlobs[10][6];
@@ -13,6 +14,7 @@ void debugShow(const CRGB (&leds)[60]);
 
 void setup() {
   FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
+  FastLED.setBrightness(BRIGHTNESS);
   Serial.begin(9600);
 
   sendToLeds(ALL_OFF,leds);
@@ -31,7 +33,7 @@ void loop() {
       float baseHue = scrambleCoordsToFloat(j,i);
       float multiplier = scrambleCoordsToFloat(i,j)/20;
       int finalHue = baseHue+(multiplier*micInput);
-      colorBlobs[i][j] = CHSV(finalHue,255,200);
+      colorBlobs[i][j] = CHSV(finalHue,255,255);
     }
   }
 
